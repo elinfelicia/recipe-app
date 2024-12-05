@@ -39,12 +39,16 @@
                 try {
                     const response = await fetch(`https://www.themealdb.com/api/json/v1/1/search.php?s=${searchTerm.value}`);
                     const data = await response.json();
-                    recipes.value = data.meals || [];
-                } catch (error) {
+                    if (Array.isArray(data.meals)) {
+                        recipes.value = data.meals;
+                    } else {
+                        error.value = 'No recipes found';
+                    }
+                } catch (err) {
                     error.value = 'Failed to fetch recipes';
-            } finally {
-                loading.value = false;
-            }
+                } finally {
+                    loading.value = false;
+                }
             };
             const addToFavourites = (recipe: any) => {
                 let favourites = localStorage.getItem('favourites');
